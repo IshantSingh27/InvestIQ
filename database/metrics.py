@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import text
 
 from database.postgres_sql import get_engine
@@ -23,5 +25,10 @@ def get_metrics():
     with engine.connect() as connection:
         result = connection.execute(text(query))
         rows = [dict(row._mapping) for row in result]
+
+    for row in rows:
+        for key, value in row.items():
+            if isinstance(value, datetime):
+                row[key] = value.isoformat()
 
     return rows
